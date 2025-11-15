@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>REDZONE — Clothing & Screen-Printing</title>
+  <meta name="description" content="REDZONE — T-shirt production, plastisol & DTF printing." />
+  <style>
+    :root{
+      --red: #e11; /* dominant red */
+      --red-accent: #ff3b3b;
+      --bg: #0b0b0b;
+      --panel: #0f0f10;
+      --muted: #9aa0a6;
+      --glass: rgba(255,255,255,0.02);
+      --text: #e7e7e7;
+      --radius: 8px;
+      --transition: 300ms cubic-bezier(.2,.9,.2,1);
+      --sidebar-w: 260px;
+      --header-h: 64px;
+    }
+    [data-theme='light']{
+      --bg: #fafafa;
+      --panel: #ffffff;
+      --glass: rgba(0,0,0,0.03);
+      --muted: #484a4d;
+      --text: #111114;
+      --red: #c31414;
+      --red-accent: #ff4d4d;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; transition: background var(--transition), color var(--transition)}
+
+    /* Header */
+    header.site-header{height:var(--header-h); display:flex; align-items:center; gap:12px; padding:0 18px; border-bottom:1px solid rgba(255,255,255,0.03); backdrop-filter: blur(4px); position:fixed; top:0; left:0; right:0; z-index:50; background:linear-gradient(180deg, rgba(0,0,0,0.25), transparent)}
+    .brand{font-weight:800; letter-spacing:2px; font-size:20px; color:var(--red);}
+    .header-controls{margin-left:auto; display:flex; gap:12px; align-items:center}
+
+    /* Layout */
+    .container{display:flex; gap:24px; padding-top:var(--header-h);}
+
+    /* Sidebar */
+    aside.sidebar{width:var(--sidebar-w); min-width:var(--sidebar-w); background:var(--panel); height:calc(100vh - var(--header-h)); position:sticky; top:var(--header-h); align-self:flex-start; border-right:1px solid rgba(255,255,255,0.03); padding:18px; display:flex; flex-direction:column; gap:12px}
+    nav.menu{overflow:auto; padding-right:6px;}
+    nav.menu ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px}
+    nav.menu a{display:block; padding:10px 12px; color:var(--text); text-decoration:none; border-radius:6px; font-weight:600; text-transform:uppercase; font-size:13px; letter-spacing:1px; transition: background var(--transition), color var(--transition);}
+    nav.menu a:hover{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color:var(--red-accent)}
+    nav.menu a.active{background:linear-gradient(90deg, rgba(255,0,0,0.05), rgba(255,0,0,0.02)); color:var(--red)}
+
+    /* Make sidebar scrollable with custom scrollbar */
+    nav.menu::-webkit-scrollbar{width:8px}
+    nav.menu::-webkit-scrollbar-track{background:transparent}
+    nav.menu::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--red),var(--red-accent)); border-radius:999px}
+    /* Firefox */
+    nav.menu{scrollbar-width:thin; scrollbar-color:var(--red) transparent}
+
+    /* Main */
+    main.content{flex:1; padding:28px; min-height:calc(100vh - var(--header-h));}
+
+    /* Sections */
+    .hero{display:flex; align-items:center; justify-content:space-between; gap:24px; padding:36px; background:linear-gradient(180deg, rgba(255,0,0,0.03), transparent); border-radius:10px}
+    .hero .text{max-width:60%}
+    .hero h1{margin:0; font-size:40px; letter-spacing:2px}
+    .hero p.lead{margin:10px 0 0; color:var(--muted); font-weight:500}
+
+    .card-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:18px}
+    .card{background:var(--panel); padding:18px; border-radius:10px; box-shadow:0 4px 18px rgba(0,0,0,0.3); transition: transform var(--transition), box-shadow var(--transition)}
+    .card:hover{transform:translateY(-6px)}
+    .services .card h3{margin:0 0 8px}
+
+    .portfolio-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px}
+    .portfolio-grid img{width:100%; height:160px; object-fit:cover; border-radius:8px}
+
+    footer.site-footer{padding:18px; text-align:center; color:var(--muted); border-top:1px solid rgba(255,255,255,0.02); margin-top:28px}
+
+    /* Controls */
+    .theme-toggle{display:inline-flex; align-items:center; gap:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); padding:6px 10px; border-radius:999px; cursor:pointer}
+    .hamburger{display:none; width:40px; height:40px; align-items:center; justify-content:center; background:transparent; border:1px solid rgba(255,255,255,0.04); border-radius:8px; cursor:pointer}
+    .hamburger .bar{width:18px; height:2px; background:var(--text); display:block; position:relative}
+    .hamburger .bar::after, .hamburger .bar::before{content:''; position:absolute; left:0; right:0; height:2px; background:var(--text)}
+    .hamburger .bar::before{top:-6px}
+    .hamburger .bar::after{top:6px}
+
+    /* Mobile / Tablet */
+    @media (max-width:900px){
+      aside.sidebar{position:fixed; left:0; top:var(--header-h); bottom:0; transform:translateX(-110%); transition: transform var(--transition); z-index:60; width:280px}
+      body.sidebar-open aside.sidebar{transform:translateX(0)}
+      .container{padding:0 12px;}
+      .hero .text{max-width:100%}
+      .hamburger{display:flex}
+      nav.menu{height:calc(100vh - var(--header-h) - 60px)}
+      .portfolio-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:520px){
+      .hero{flex-direction:column; align-items:flex-start}
+      .portfolio-grid{grid-template-columns:1fr}
+      header.site-header{padding:0 12px}
+      .brand{font-size:18px}
+      aside.sidebar{width:260px}
+    }
+
+    /* Simple fade-in animation for sections */
+    .reveal{opacity:0; transform:translateY(12px); transition:opacity 600ms ease, transform 600ms ease}
+    .reveal.visible{opacity:1; transform:translateY(0)}
+
+    /* small utilities */
+    .muted{color:var(--muted)}
+    .kicker{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1px}
+
+    /* Social media links */
+    .social-links{display:flex; gap:12px; margin-top:16px; flex-wrap:wrap}
+    .social-link{display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:8px; background:linear-gradient(135deg, rgba(255,0,0,0.1), rgba(255,0,0,0.05)); border:1px solid rgba(255,0,0,0.2); text-decoration:none; color:var(--text); transition: transform var(--transition), background var(--transition), color var(--transition)}
+    .social-link:hover{transform:translateY(-3px); background:linear-gradient(135deg, var(--red), var(--red-accent)); color:#fff}
+    .social-link svg{width:20px; height:20px}
+
+    /* Portfolio image animation */
+    .portfolio-grid img{cursor:pointer}
+    .portfolio-grid img:hover{transform:scale(1.05); filter:brightness(1.1)}
+
+    /* Modal lightbox */
+    .modal{display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:100; align-items:center; justify-content:center; opacity:0; backdrop-filter:blur(4px); transition:opacity var(--transition)}
+    .modal.active{display:flex; opacity:1}
+    .modal-content{position:relative; max-width:90vw; max-height:90vh; animation:slideInScale 500ms cubic-bezier(.2,.9,.2,1)}
+    .modal-content img{width:100%; height:auto; border-radius:10px; box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+    .modal-close{position:absolute; top:-40px; right:0; width:40px; height:40px; background:transparent; border:2px solid var(--red); border-radius:50%; color:var(--red); font-size:28px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: background var(--transition), color var(--transition)}
+    .modal-close:hover{background:var(--red); color:#fff}
+
+    @keyframes slideInScale{
+      from{transform:scale(0.8) translateY(-30px); opacity:0}
+      to{transform:scale(1) translateY(0); opacity:1}
+    }
+
+    /* Section highlight animation */
+    section.highlight-pulse{
+      animation: pulseHighlight 1000ms ease-out;
+    }
+
+    @keyframes pulseHighlight{
+      0%{
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7), inset 0 0 20px rgba(255, 0, 0, 0.2);
+        background: linear-gradient(135deg, rgba(255, 0, 0, 0.15), rgba(255, 0, 0, 0.05));
+      }
+      50%{
+        box-shadow: 0 0 0 15px rgba(255, 0, 0, 0), inset 0 0 10px rgba(255, 0, 0, 0.1);
+      }
+      100%{
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0), inset 0 0 0px rgba(255, 0, 0, 0);
+        background: transparent;
+      }
+    }
+
+    /* Team member cards */
+    .team-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:24px; margin-top:20px}
+    .team-member{position:relative; cursor:pointer; border-radius:12px; overflow:hidden}
+    .team-member-img{width:100%; height:280px; object-fit:cover; display:block; transition: transform 500ms cubic-bezier(.2,.9,.2,1)}
+    .team-member-overlay{position:absolute; top:0; left:0; right:0; bottom:0; background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.8)); display:flex; flex-direction:column; align-items:flex-end; justify-content:flex-end; padding:20px; opacity:0; transition: opacity 400ms ease}
+    .team-member:hover .team-member-overlay{opacity:1}
+    .team-member:hover .team-member-img{transform:scale(1.08) rotate(1deg)}
+    .team-member-info{color:#fff; text-align:right}
+    .team-member-name{font-weight:700; font-size:18px; letter-spacing:1px; margin:0}
+    .team-member-role{font-size:13px; color:var(--red-accent); margin:6px 0 0; text-transform:uppercase; letter-spacing:1px}
+
+    /* Team member click animation */
+    .team-member.clicked .team-member-img{animation: memberClick 600ms cubic-bezier(.2,.9,.2,1)}
+    @keyframes memberClick{
+      0%{transform:scale(1) rotate(0deg)}
+      50%{transform:scale(1.15) rotate(2deg)}
+      100%{transform:scale(1.08) rotate(1deg)}
+    }
+
+    /* Mobile adjustments */
+    @media (max-width:768px){
+      .team-grid{grid-template-columns:repeat(2, 1fr); gap:16px}
+    }
+    @media (max-width:520px){
+      .team-grid{grid-template-columns:1fr}
+      .team-member-img{height:220px}
+    }
+
+    /* Team modal lightbox */
+    .team-modal{display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); z-index:101; align-items:center; justify-content:center; opacity:0; backdrop-filter:blur(4px); transition:opacity var(--transition)}
+    .team-modal.active{display:flex; opacity:1}
+    .team-modal-content{position:relative; max-width:600px; width:90%; animation:slideInScale 500ms cubic-bezier(.2,.9,.2,1)}
+    .team-modal-img{width:100%; height:400px; object-fit:cover; border-radius:12px; display:block}
+    .team-modal-info{background:var(--panel); padding:28px; border-radius:0 0 12px 12px; text-align:center}
+    .team-modal-name{font-size:22px; font-weight:700; margin:0; letter-spacing:1px}
+    .team-modal-role{font-size:14px; color:var(--red); margin:8px 0 0; text-transform:uppercase; letter-spacing:1px}
+    .team-modal-desc{font-size:14px; color:var(--muted); margin:12px 0 0}
+    .team-modal-close{position:absolute; top:-50px; right:0; width:40px; height:40px; background:transparent; border:2px solid var(--red); border-radius:50%; color:var(--red); font-size:28px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: background var(--transition), color var(--transition)}
+    .team-modal-close:hover{background:var(--red); color:#fff}
+
+    /* Navigation arrows */
+    .team-nav-btn{position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; background:linear-gradient(135deg, var(--red), var(--red-accent)); border:none; border-radius:50%; color:#fff; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: transform var(--transition), box-shadow var(--transition); z-index:5}
+    .team-nav-btn:hover{transform:translateY(-50%) scale(1.1); box-shadow:0 8px 20px rgba(255,0,0,0.4)}
+    .team-nav-prev{left:-60px}
+    .team-nav-next{right:-60px}
+
+    @media (max-width:900px){
+      .team-nav-btn{width:36px; height:36px; font-size:18px}
+      .team-nav-prev{left:-48px}
+      .team-nav-next{right:-48px}
+    }
+
+  </style>
+</head>
+<body data-theme="dark">
+  <header class="site-header">
+    <button class="hamburger" id="btn-hamburger" aria-label="Toggle menu">
+      <span class="bar"></span>
+    </button>
+    <div class="brand">REDZONE</div>
+    <div class="header-controls">
+      <button class="theme-toggle" id="btn-theme" aria-pressed="false" title="Toggle dark / light mode">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="var(--red)"/></svg>
+        <span class="muted">Theme</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+      <div class="kicker">Navigation</div>
+      <nav class="menu" id="nav-menu">
+        <ul>
+          <li><a href="#home" class="active">Home</a></li>
+           <li><a href="#about">About Us</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+           <li><a href="#our team">our team</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <!-- long menu demonstration (keeps sidebar scrollbar visible) -->
+        </ul>
+      </nav>
+      <div style="margin-top:auto; font-size:13px; color:var(--muted);">© <span id="year"></span> REDZONE</div>
+    </aside>
+
+    <main class="content">
+      <section id="home" class="hero reveal">
+        <div class="text">
+          <div class="kicker">REDZONE</div>
+          <h1>Precision Printing. Fast Turnaround.</h1>
+          <p class="lead">Produksi kaos berkualitas dan layanan sablon tingkat lanjut — plastisol, DTF, dan lainnya. Dibangun untuk brand yang membutuhkan hasil yang tajam dan presisi.</p>
+        </div>
+        <div style="min-width:220px; text-align:right">
+          <div style="background:linear-gradient(135deg,var(--red),var(--red-accent)); padding:18px; border-radius:10px; color:white; font-weight:700">Semua produk-tersedia</div>
+        </div>
+      </section>
+
+      <section id="about" class="reveal" style="margin-top:18px">
+        <div class="card">
+          <h3>Company</h3>
+          <p class="muted">REDZONE Merupakan vendor clothing dan sablon yang berfokus pada produksi kaos berkualitas industri serta layanan cetak untuk UMKM, band, tim, dan brand apparel. Kami menggabungkan teknik sablon presisi dengan pengalaman yang lebih dari 21tahun untuk menghasilkan warna yang konsisten dan daya tahan maksimal.</p>
+        </div>
+      </section>
+
+      <section id="services" class="services reveal" style="margin-top:18px">
+        <div class="kicker">Services</div>
+        <div class="card-grid">
+          <div class="card">
+            <h3>T-Shirt Production</h3>
+            <p class="muted">Proses produksi kaos dilakukan sepenuhnya di internal REDZONE — mulai dari penjahitan, quality control, hingga packing siap kirim. Karena dikerjakan di garment kami sendiri, setiap detail bisa kami kontrol ketat, sehingga risiko kesalahan jauh lebih kecil dan kualitas selalu konsisten.</p>
+          </div>
+          <div class="card">
+            <h3>Plastisol Printing</h3>
+            <p class="muted">Cetakan plastisol yang tahan lama dengan pigmen warna yang hidup dan detail tepi yang tajam — ideal untuk pesanan partai besar. Di REDZONE, setiap hasil dicetak dengan presisi tinggi sehingga kualitasnya selalu konsisten dari lembar pertama sampai terakhir.</p>
+          </div>
+          <div class="card">
+            <h3>DTF Printing</h3>
+            <p class="muted">DTF kami menggunakan film premium untuk hasil cetak yang lembut dengan reproduksi warna yang sangat akurat. REDZONE menggunakan material berkualitas tinggi sehingga daya tahan cetak tetap optimal dan detail gambar terbaca hingga piksel terkecil.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="portfolio" class="reveal" style="margin-top:18px">
+        <div class="kicker">Portfolio</div>
+        <div class="portfolio-grid" id="portfolio-grid">
+          <img src="https://picsum.photos/seed/rz1/800/600" alt="Portfolio 1"/>
+          <img src="https://picsum.photos/seed/rz2/800/600" alt="Portfolio 2"/>
+          <img src="https://picsum.photos/seed/rz3/800/600" alt="Portfolio 3"/>
+          <img src="https://picsum.photos/seed/rz4/800/600" alt="Portfolio 4"/>
+          <img src="https://picsum.photos/seed/rz5/800/600" alt="Portfolio 5"/>
+          <img src="https://picsum.photos/seed/rz6/800/600" alt="Portfolio 6"/>
+        </div>
+      </section>
+
+      <section id="our team" class="reveal" style="margin-top:18px">
+        <div class="kicker">Our Team</div>
+        <h2 style="margin:12px 0 0; font-size:24px; letter-spacing:1px">Meet The Crew</h2>
+        <div class="team-grid">
+          <!-- Team member template - replace src and info -->
+          <div class="team-member">
+            <img src="https://picsum.photos/seed/team1/400/350" alt="Team Member 1" class="team-member-img"/>
+            <div class="team-overlay">
+              <div class="team-member-overlay">
+                <div class="team-member-info">
+                  <h3 class="team-member-name">Member Name</h3>
+                  <p class="team-member-role">Division / Role</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <img src="https://picsum.photos/seed/team2/400/350" alt="Team Member 2" class="team-member-img"/>
+            <div class="team-overlay">
+              <div class="team-member-overlay">
+                <div class="team-member-info">
+                  <h3 class="team-member-name">Member Name</h3>
+                  <p class="team-member-role">Division / Role</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <img src="https://picsum.photos/seed/team3/400/350" alt="Team Member 3" class="team-member-img"/>
+            <div class="team-overlay">
+              <div class="team-member-overlay">
+                <div class="team-member-info">
+                  <h3 class="team-member-name">Member Name</h3>
+                  <p class="team-member-role">Division / Role</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <img src="https://picsum.photos/seed/team4/400/350" alt="Team Member 4" class="team-member-img"/>
+            <div class="team-overlay">
+              <div class="team-member-overlay">
+                <div class="team-member-info">
+                  <h3 class="team-member-name">Member Name</h3>
+                  <p class="team-member-role">Division / Role</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <img src="https://picsum.photos/seed/team5/400/350" alt="Team Member 5" class="team-member-img"/>
+            <div class="team-overlay">
+              <div class="team-member-overlay">
+                <div class="team-member-info">
+                  <h3 class="team-member-name">Member Name</h3>
+                  <p class="team-member-role">Division / Role</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <img src="https://picsum.photos/seed/team6/400/350" alt="Team Member 6" class="team-member-img"/>
+            <div class="team-overlay">
+              <div class="team-member-overlay">
+                <div class="team-member-info">
+                  <h3 class="team-member-name">Member Name</h3>
+                  <p class="team-member-role">Division / Role</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="reveal" style="margin-top:18px">
+        <div class="card">
+          <h3>Contact</h3>
+          <p class="muted"> Tertarik untuk buat kaos/jersey custom? <strong>klik salah satu link untuk konsultasi</strong> .</p>
+          
+          <div style="margin-top:24px">
+            <div class="kicker" style="margin-bottom:12px">Contact Us</div>
+            <div class="social-links">
+              <!-- Instagram -->
+              <a href="https://instagram.com/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M12 8a4 4 0 100 8 4 4 0 000-8z" fill="var(--bg)"/><circle cx="18.5" cy="5.5" r="1.5" fill="var(--bg)"/></svg>
+              </a>
+              
+              <!-- Facebook -->
+              <a href="https://facebook.com/" class="social-link" title="Facebook" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </a>
+              
+              <!-- TikTok -->
+              <a href="https://tiktok.com/" class="social-link" title="TikTok" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v12.7a2.85 2.85 0 1 1-5.45-2.36c.34-.94 1.16-1.28 2.26-1.3v3.67a5.50 5.50 0 1 0 5.68 5.33V9.5a7.50 7.50 0 0 0 4.26-4.81z"/></svg>
+              </a>
+              
+              <!-- Email -->
+              <a href="mailto:redzone.adm01@gmail.com?subject=Order%20Kaos&body=Halo%20Redzone,%0DSaya%20mau%20tanya%20soal%20custom%20kaos." class="social-link" title="Email" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        Built with precision — REDZONE. <span class="muted">All rights reserved.</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Image Modal -->
+  <div class="modal" id="imageModal">
+    <div class="modal-content">
+      <img id="modalImage" src="" alt=""/>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+  </div>
+
+  <!-- Team Member Modal -->
+  <div class="team-modal" id="teamModal">
+    <div class="team-modal-content">
+      <img id="teamModalImg" src="" alt="" class="team-modal-img"/>
+      <div class="team-modal-info">
+        <h3 class="team-modal-name" id="teamModalName">Name</h3>
+        <p class="team-modal-role" id="teamModalRole">Role</p>
+        <p class="team-modal-desc" id="teamModalDesc">Team member description</p>
+      </div>
+      <button class="team-modal-close" id="teamModalClose">&times;</button>
+    </div>
+  </div>
+
+  <script>
+    // small helpers
+    const body = document.body;
+    const btnTheme = document.getElementById('btn-theme');
+    const btnHamburger = document.getElementById('btn-hamburger');
+    const yearEl = document.getElementById('year');
+    yearEl.textContent = new Date().getFullYear();
+
+    // Theme: default dark
+    const storageKey = 'rz-theme';
+    function applyTheme(theme){
+      if(theme === 'light') body.setAttribute('data-theme','light');
+      else body.setAttribute('data-theme','dark');
+      btnTheme.setAttribute('aria-pressed', theme === 'light');
+      localStorage.setItem(storageKey, theme);
+    }
+    const saved = localStorage.getItem(storageKey);
+    applyTheme(saved === 'light' ? 'light' : 'dark');
+
+    btnTheme.addEventListener('click', ()=>{
+      const current = body.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      applyTheme(current === 'light' ? 'dark' : 'light');
+    });
+
+    // Hamburger / sidebar toggle
+    btnHamburger.addEventListener('click', ()=>{
+      const open = body.classList.toggle('sidebar-open');
+      btnHamburger.setAttribute('aria-expanded', open);
+    });
+
+    // Close sidebar when nav link clicked (mobile)
+    document.getElementById('nav-menu').addEventListener('click', (e)=>{
+      if(e.target.tagName === 'A' && window.innerWidth <= 900){
+        body.classList.remove('sidebar-open');
+        btnHamburger.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Simple reveal-on-scroll using IntersectionObserver
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en => {
+        if(en.isIntersecting){
+          en.target.classList.add('visible');
+          io.unobserve(en.target);
+        }
+      });
+    },{threshold:0.12});
+    reveals.forEach(r => io.observe(r));
+
+    // Keyboard: close sidebar with Escape
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape'){
+        body.classList.remove('sidebar-open');
+      }
+    });
+
+    // Smooth scrolling for anchor links
+    // Use id lookup (getElementById) instead of querySelector so IDs
+    // containing spaces (e.g. "our team") still work when clicked.
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (ev)=>{
+        const href = a.getAttribute('href');
+        if(href && href.length > 1){
+          ev.preventDefault();
+          const idName = href.startsWith('#') ? href.slice(1) : href;
+          // Prefer getElementById; fallback to attribute match for safety
+          let target = document.getElementById(idName) || document.querySelector(`[id="${idName}"]`);
+          if(target){
+            target.scrollIntoView({behavior:'smooth', block:'start'});
+            // Update active menu item (pass selector-style string)
+            updateActiveMenu('#' + idName);
+          }
+        }
+      });
+    });
+
+    // Update active menu item based on section
+    function updateActiveMenu(sectionId){
+      document.querySelectorAll('nav.menu a').forEach(link => link.classList.remove('active'));
+      const activeLink = document.querySelector(`nav.menu a[href="${sectionId}"]`);
+      if(activeLink) activeLink.classList.add('active');
+
+      // Add highlight pulse to the section.
+      // Some section ids may contain spaces (e.g. "our team"). Rather than using
+      // querySelector with the raw selector (which breaks on spaces), find the
+      // section by matching its id attribute explicitly.
+      document.querySelectorAll('section, main').forEach(sec => sec.classList.remove('highlight-pulse'));
+      const idName = sectionId && sectionId.startsWith('#') ? sectionId.slice(1) : sectionId;
+      let targetSection = null;
+      if(idName){
+        const candidateSections = document.querySelectorAll('section, main');
+        candidateSections.forEach(sec => {
+          if(sec.getAttribute('id') === idName) targetSection = sec;
+        });
+      }
+      if(targetSection){
+        targetSection.classList.add('highlight-pulse');
+        // remove pulse after animation completes (slightly longer than 1s)
+        setTimeout(()=>{
+          if(targetSection) targetSection.classList.remove('highlight-pulse');
+        }, 1100);
+      }
+    }
+
+    // Highlight menu item on scroll
+    const sections = document.querySelectorAll('section[id], main[id]');
+    window.addEventListener('scroll', ()=>{
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 120; // offset for header
+        if(window.pageYOffset >= sectionTop){
+          current = '#' + section.getAttribute('id');
+        }
+      });
+      if(current) updateActiveMenu(current);
+    }, {passive: true});
+
+    // Portfolio image lightbox
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalClose = document.getElementById('modalClose');
+    const portfolioImages = document.querySelectorAll('.portfolio-grid img');
+
+    portfolioImages.forEach(img => {
+      img.addEventListener('click', ()=>{
+        modalImage.src = img.src;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    function closeModal(){
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{
+      if(e.target === modal) closeModal();
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && modal.classList.contains('active')){
+        closeModal();
+      }
+    });
+
+    // Team member click animation
+    const teamMembers = document.querySelectorAll('.team-member');
+    teamMembers.forEach(member => {
+      member.addEventListener('click', ()=>{
+        member.classList.add('clicked');
+        setTimeout(()=>{
+          member.classList.remove('clicked');
+        }, 600);
+
+        // Open team modal
+        const img = member.querySelector('.team-member-img');
+        const name = member.querySelector('.team-member-name').textContent;
+        const role = member.querySelector('.team-member-role').textContent;
+        
+        openTeamModal(img.src, name, role);
+      });
+    });
+
+    // Team member modal
+    const teamModal = document.getElementById('teamModal');
+    const teamModalImg = document.getElementById('teamModalImg');
+    const teamModalName = document.getElementById('teamModalName');
+    const teamModalRole = document.getElementById('teamModalRole');
+    const teamModalClose = document.getElementById('teamModalClose');
+
+    function openTeamModal(imgSrc, name, role){
+      teamModalImg.src = imgSrc;
+      teamModalName.textContent = name;
+      teamModalRole.textContent = role;
+      teamModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeTeamModal(){
+      teamModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    teamModalClose.addEventListener('click', closeTeamModal);
+    teamModal.addEventListener('click', (e)=>{
+      if(e.target === teamModal) closeTeamModal();
+    });
+
+    // Close team modal with Escape
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape' && teamModal.classList.contains('active')){
+        closeTeamModal();
+      }
+    });
+  </script>
+</body>
+</html>
