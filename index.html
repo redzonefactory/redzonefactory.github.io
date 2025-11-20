@@ -203,6 +203,95 @@
       .team-nav-next{right:-48px}
     }
 
+    /* Floating draggable bubble (liquid glass) */
+    :root{ --bubble-size:64px }
+    .chat-bubble{
+      position:fixed;
+      right:24px;
+      bottom:24px;
+      width:var(--bubble-size);
+      height:var(--bubble-size);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      backdrop-filter: blur(10px) saturate(120%);
+      -webkit-backdrop-filter: blur(10px) saturate(120%);
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03);
+      z-index:120;
+      cursor:pointer;
+      touch-action: none; /* allow pointer events for drag */
+    }
+    .chat-bubble:active{transform:scale(0.98)}
+    .chat-bubble .label{display:none}
+    .chat-bubble svg{width:28px; height:28px; color:var(--red)}
+    /* Entrance animation when page loads */
+    .chat-bubble.enter{animation:bubbleIn 700ms cubic-bezier(.2,.9,.2,1) both}
+    @keyframes bubbleIn{
+      0%{transform:translateY(18px) scale(.92); opacity:0}
+      60%{transform:translateY(-6px) scale(1.02); opacity:1}
+      100%{transform:translateY(0) scale(1)}
+    }
+    /* Hint animation: wave/nudge to show it's draggable */
+    .chat-bubble.hint{animation:bubbleHint 2000ms cubic-bezier(.43,.13,.23,.96) infinite}
+    @keyframes bubbleHint{
+      0%{transform:translateX(0) rotate(0deg)}
+      15%{transform:translateX(-12px) rotate(-3deg)}
+      25%{transform:translateX(8px) rotate(2deg)}
+      35%{transform:translateX(-10px) rotate(-2deg)}
+      45%{transform:translateX(6px) rotate(1deg)}
+      55%{transform:translateX(-6px) rotate(-1deg)}
+      65%{transform:translateX(4px) rotate(0.5deg)}
+      75%{transform:translateX(-2px) rotate(-0.5deg)}
+      100%{transform:translateX(0) rotate(0deg)}
+    }
+    /* Snap-to-edge with realistic physics bounce */
+    .chat-bubble.snapping{animation:bubbleSnap 850ms cubic-bezier(.68,.15,.26,.86) forwards}
+    @keyframes bubbleSnap{
+      0%{transform:scale(1) rotate(0deg)}
+      25%{transform:scale(1.1) rotate(-2deg)}
+      50%{transform:scale(0.95) rotate(1deg)}
+      70%{transform:scale(1.04) rotate(-1deg)}
+      85%{transform:scale(0.98) rotate(0.5deg)}
+      100%{transform:scale(1) rotate(0deg)}
+    }
+    /* Desktop: show a small pill label to the left of the bubble */
+    .chat-bubble .label{
+      position:absolute;
+      right:calc(100% + 12px);
+      top:50%;
+      transform:translateY(-50%);
+      background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      padding:8px 12px;
+      border-radius:999px;
+      color:var(--text);
+      font-weight:700;
+      font-size:13px;
+      white-space:nowrap;
+      box-shadow:0 10px 30px rgba(0,0,0,0.35);
+      display:none;
+      pointer-events:none; /* click should hit bubble */
+      transition:all 850ms cubic-bezier(.68,.15,.26,.86);
+    }
+    /* Label snap-left: move to right side of bubble */
+    .chat-bubble.snapped-left .label{
+      right:auto;
+      left:calc(100% + 12px);
+    }
+    /* Label snap-right: stay on left side (default) */
+    .chat-bubble.snapped-right .label{
+      right:calc(100% + 12px);
+      left:auto;
+    }
+    @media (min-width:900px){
+      .chat-bubble .label{display:block}
+    }
+    @media (max-width:520px){
+      :root{ --bubble-size:58px }
+    }
+
   </style>
 </head>
 <body data-theme="dark">
@@ -291,72 +380,60 @@
         <div class="team-grid">
           <!-- Team member template - replace src and info -->
           <div class="team-member">
-            <img src="https://picsum.photos/seed/team1/400/350" alt="Team Member 1" class="team-member-img"/>
+            <img src="https://pbs.twimg.com/media/G6K5dwxacAgLrEh?format=jpg&name=4096x4096" alt="Team Member 2" class="team-member-img"/>
             <div class="team-overlay">
               <div class="team-member-overlay">
                 <div class="team-member-info">
-                  <h3 class="team-member-name">Member Name</h3>
-                  <p class="team-member-role">Division / Role</p>
+                  <h3 class="team-member-name">STEVEN</h3>
+                  <p class="team-member-role">PRODUKSI / Operator screen-printing</p>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="team-member">
-            <img src="https://picsum.photos/seed/team2/400/350" alt="Team Member 2" class="team-member-img"/>
+            <img src="https://pbs.twimg.com/media/G6K5nyEbcAACqtk?format=jpg&name=small" alt="Team Member 3" class="team-member-img"/>
             <div class="team-overlay">
               <div class="team-member-overlay">
                 <div class="team-member-info">
-                  <h3 class="team-member-name">Member Name</h3>
-                  <p class="team-member-role">Division / Role</p>
+                  <h3 class="team-member-name">THORIQ</h3>
+                  <p class="team-member-role">PRODUKSI / Operator heat-press</p>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="team-member">
-            <img src="https://picsum.photos/seed/team3/400/350" alt="Team Member 3" class="team-member-img"/>
+            <img src="https://pbs.twimg.com/media/G6K5dz-acAQKbdJ?format=jpg&name=4096x4096" alt="Team Member 4" class="team-member-img"/>
             <div class="team-overlay">
               <div class="team-member-overlay">
                 <div class="team-member-info">
-                  <h3 class="team-member-name">Member Name</h3>
-                  <p class="team-member-role">Division / Role</p>
+                  <h3 class="team-member-name">FIKRI</h3>
+                  <p class="team-member-role">PRODUKSI / Operator unit afdruk</p>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="team-member">
-            <img src="https://picsum.photos/seed/team4/400/350" alt="Team Member 4" class="team-member-img"/>
+            <img src="https://pbs.twimg.com/media/G6K5d0FacAA9ppW?format=jpg&name=4096x4096" alt="Team Member 5" class="team-member-img"/>
             <div class="team-overlay">
               <div class="team-member-overlay">
                 <div class="team-member-info">
-                  <h3 class="team-member-name">Member Name</h3>
-                  <p class="team-member-role">Division / Role</p>
+                  <h3 class="team-member-name">NISA</h3>
+                  <p class="team-member-role">PRODUKSI / Unit internal-Garment</p>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="team-member">
-            <img src="https://picsum.photos/seed/team5/400/350" alt="Team Member 5" class="team-member-img"/>
+            <img src="https://pbs.twimg.com/media/G6K5dz5bsAAnOEj?format=jpg&name=4096x4096" alt="Team Member 6" class="team-member-img"/>
             <div class="team-overlay">
               <div class="team-member-overlay">
                 <div class="team-member-info">
-                  <h3 class="team-member-name">Member Name</h3>
-                  <p class="team-member-role">Division / Role</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="team-member">
-            <img src="https://picsum.photos/seed/team6/400/350" alt="Team Member 6" class="team-member-img"/>
-            <div class="team-overlay">
-              <div class="team-member-overlay">
-                <div class="team-member-info">
-                  <h3 class="team-member-name">Member Name</h3>
-                  <p class="team-member-role">Division / Role</p>
+                  <h3 class="team-member-name">NOVI</h3>
+                  <p class="team-member-role">PRODUKSI / Unit internal-Garment</p>
                 </div>
               </div>
             </div>
@@ -409,6 +486,12 @@
       <button class="modal-close" id="modalClose">&times;</button>
     </div>
   </div>
+
+  <!-- Floating draggable WhatsApp bubble -->
+  <a id="chatBubble" class="chat-bubble" href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp" aria-label="WhatsApp chat">
+    <span class="label">Hubungi kami diWhatsaap</span>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.47-.149-.67.15-.198.297-.767.967-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.133-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.074-.149-.67-1.611-.916-2.205-.242-.579-.487-.5-.67-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487 0 0 .845.36 1.31.29.448-.064 1.758-.72 2.006-1.415.248-.695.248-1.29.173-1.415-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.486 2 2 6.485 2 12c0 2.11.586 4.083 1.6 5.78L2 22l4.37-1.453C8.704 21.49 10.312 22 12 22c5.514 0 10-4.485 10-10S17.514 2 12 2z"/></svg>
+  </a>
 
   <!-- Team Member Modal -->
   <div class="team-modal" id="teamModal">
@@ -621,6 +704,147 @@
         closeTeamModal();
       }
     });
+
+    // Floating draggable bubble logic
+    (function(){
+      const bubble = document.getElementById('chatBubble');
+      if(!bubble) return;
+      let size = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bubble-size')) || 64;
+
+      function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
+      function setSidebar(){ return document.querySelector('aside.sidebar'); }
+      function getNavWidth(){ const nav = setSidebar(); return (nav && window.innerWidth > 900) ? nav.offsetWidth : 0; }
+      
+      function setPosLeftTop(x,y){
+        bubble.style.left = x + 'px';
+        bubble.style.top = y + 'px';
+        bubble.style.right = 'auto';
+        bubble.style.bottom = 'auto';
+      }
+      function setPosRightBottom(){
+        bubble.style.right = '24px';
+        bubble.style.bottom = '24px';
+        bubble.style.left = 'auto';
+        bubble.style.top = 'auto';
+      }
+
+      // Always start at default bottom-right on load (no persistence)
+      setPosRightBottom();
+
+      // Entrance animation: add class then remove after animation completes
+      requestAnimationFrame(()=>{
+        bubble.classList.add('enter');
+        bubble.addEventListener('animationend', ()=> bubble.classList.remove('enter'), {once:true});
+        // After entrance, add hint animation to show it's draggable (loops until user drags)
+        setTimeout(()=>{
+          bubble.classList.add('hint');
+        }, 1500);
+      });
+
+      let dragging = false;
+      let pointerId = null;
+      let startX = 0, startY = 0, origX = 0, origY = 0;
+      let moved = false;
+
+      bubble.addEventListener('pointerdown', (ev)=>{
+        // Stop hint animation if user starts dragging
+        bubble.classList.remove('hint');
+        
+        ev.preventDefault();
+        pointerId = ev.pointerId;
+        bubble.setPointerCapture(pointerId);
+        dragging = true;
+        moved = false;
+        startX = ev.clientX; startY = ev.clientY;
+        const rect = bubble.getBoundingClientRect();
+        origX = rect.left; origY = rect.top;
+        // recalc size (in case of responsive change)
+        size = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bubble-size')) || size;
+      });
+
+      window.addEventListener('pointermove', (ev)=>{
+        if(!dragging || ev.pointerId !== pointerId) return;
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+        if(Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+        let nx = origX + dx;
+        let ny = origY + dy;
+        // Restrict: keep away from sidebar/nav area on desktop
+        const navWidth = getNavWidth();
+        const minX = navWidth + 8;
+        const maxX = window.innerWidth - size - 8;
+        const topLimit = 8 + (document.querySelector('.site-header')?.offsetHeight || 0);
+        const maxY = window.innerHeight - size - 8;
+        nx = clamp(nx, minX, maxX);
+        ny = clamp(ny, topLimit, maxY);
+        setPosLeftTop(nx, ny);
+      }, {passive:false});
+
+      function snapToEdge(){
+        // Snap to left or right edge depending on where the bubble's center is
+        const rect = bubble.getBoundingClientRect();
+        const centerX = rect.left + rect.width/2;
+        const navWidth = getNavWidth();
+        const minLeftSnap = navWidth + 8;
+        const viewportMid = window.innerWidth/2;
+        const topLimit = 8 + (document.querySelector('.site-header')?.offsetHeight || 0);
+        let finalTop = clamp(rect.top, topLimit, window.innerHeight - rect.height - 8);
+        
+        // Add snap animation class
+        bubble.classList.add('snapping');
+        setTimeout(()=> bubble.classList.remove('snapping'), 850);
+        
+        if(centerX < viewportMid){
+          // snap left (but not into sidebar)
+          bubble.style.left = minLeftSnap + 'px';
+          bubble.style.top = Math.round(finalTop) + 'px';
+          bubble.style.right = 'auto';
+          bubble.style.bottom = 'auto';
+          bubble.classList.remove('snapped-right');
+          bubble.classList.add('snapped-left');
+        } else {
+          // snap right
+          bubble.style.right = '24px';
+          bubble.style.top = Math.round(finalTop) + 'px';
+          bubble.style.left = 'auto';
+          bubble.style.bottom = 'auto';
+          bubble.classList.remove('snapped-left');
+          bubble.classList.add('snapped-right');
+        }
+      }
+
+      function endDrag(ev){
+        if(!dragging) return;
+        try{ bubble.releasePointerCapture(pointerId); }catch(e){}
+        dragging = false;
+        // snap to nearest edge
+        snapToEdge();
+      }
+
+      window.addEventListener('pointerup', (ev)=>{ endDrag(ev); });
+      window.addEventListener('pointercancel', (ev)=>{ endDrag(ev); });
+
+      // Distinguish click vs drag: if not moved significantly, allow normal navigation
+      bubble.addEventListener('click', (ev)=>{
+        if(moved){
+          // prevent following the link when the user was dragging
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+      });
+
+      // On resize, make sure bubble stays visible and reset to default bottom-right
+      window.addEventListener('resize', ()=>{
+        size = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bubble-size')) || size;
+        // Reset to default on resize to ensure consistent placement
+        setPosRightBottom();
+        bubble.classList.remove('snapped-left', 'snapped-right');
+      });
+
+      // Keep bubble on top while interacting with modals
+      const observer = new MutationObserver(()=> bubble.style.zIndex = 120);
+      observer.observe(document.body, {attributes:true, childList:true, subtree:true});
+    })();
   </script>
 </body>
 </html>
