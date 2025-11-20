@@ -1,3 +1,4 @@
+<!-- updated -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -207,8 +208,8 @@
     :root{ --bubble-size:64px }
     .chat-bubble{
       position:fixed;
-      right:24px;
-      bottom:24px;
+      right:4vw;
+      bottom:4vw;
       width:var(--bubble-size);
       height:var(--bubble-size);
       display:inline-flex;
@@ -222,7 +223,10 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03);
       z-index:120;
       cursor:pointer;
-      touch-action: none; /* allow pointer events for drag */
+      touch-action: manipulation; /* allow pointer events for drag/touch */
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     .chat-bubble:active{transform:scale(0.98)}
     .chat-bubble .label{display:none}
@@ -290,6 +294,7 @@
     }
     @media (max-width:520px){
       :root{ --bubble-size:58px }
+      .chat-bubble .label{display:block; font-size:12px; padding:7px 10px;}
     }
 
   </style>
@@ -746,30 +751,36 @@
       let startX = 0, startY = 0, origX = 0, origY = 0;
       let moved = false;
 
-      bubble.addEventListener('pointerdown', (ev)=>{
-        // Stop hint animation if user starts dragging
+      // Support both pointer and touch events for mobile compatibility
+      function startDrag(ev){
         bubble.classList.remove('hint');
-        
         ev.preventDefault();
-        pointerId = ev.pointerId;
-        bubble.setPointerCapture(pointerId);
+        pointerId = ev.pointerId || 1;
+        if(bubble.setPointerCapture) bubble.setPointerCapture(pointerId);
         dragging = true;
         moved = false;
-        startX = ev.clientX; startY = ev.clientY;
+        startX = ev.clientX || (ev.touches ? ev.touches[0].clientX : 0);
+        startY = ev.clientY || (ev.touches ? ev.touches[0].clientY : 0);
         const rect = bubble.getBoundingClientRect();
         origX = rect.left; origY = rect.top;
-        // recalc size (in case of responsive change)
         size = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bubble-size')) || size;
-      });
+      }
+      bubble.addEventListener('pointerdown', startDrag);
+      bubble.addEventListener('touchstart', startDrag, {passive:false});
 
-      window.addEventListener('pointermove', (ev)=>{
-        if(!dragging || ev.pointerId !== pointerId) return;
-        const dx = ev.clientX - startX;
-        const dy = ev.clientY - startY;
+      function moveDrag(ev){
+        if(!dragging) return;
+        let clientX = ev.clientX;
+        let clientY = ev.clientY;
+        if(ev.touches && ev.touches.length){
+          clientX = ev.touches[0].clientX;
+          clientY = ev.touches[0].clientY;
+        }
+        const dx = clientX - startX;
+        const dy = clientY - startY;
         if(Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
         let nx = origX + dx;
         let ny = origY + dy;
-        // Restrict: keep away from sidebar/nav area on desktop
         const navWidth = getNavWidth();
         const minX = navWidth + 8;
         const maxX = window.innerWidth - size - 8;
@@ -778,7 +789,9 @@
         nx = clamp(nx, minX, maxX);
         ny = clamp(ny, topLimit, maxY);
         setPosLeftTop(nx, ny);
-      }, {passive:false});
+      }
+      window.addEventListener('pointermove', moveDrag, {passive:false});
+      window.addEventListener('touchmove', moveDrag, {passive:false});
 
       function snapToEdge(){
         // Snap to left or right edge depending on where the bubble's center is
@@ -823,6 +836,8 @@
 
       window.addEventListener('pointerup', (ev)=>{ endDrag(ev); });
       window.addEventListener('pointercancel', (ev)=>{ endDrag(ev); });
+      window.addEventListener('touchend', (ev)=>{ endDrag(ev); });
+      window.addEventListener('touchcancel', (ev)=>{ endDrag(ev); });
 
       // Distinguish click vs drag: if not moved significantly, allow normal navigation
       bubble.addEventListener('click', (ev)=>{
