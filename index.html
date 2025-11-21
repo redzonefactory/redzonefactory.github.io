@@ -223,10 +223,16 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03);
       z-index:120;
       cursor:pointer;
-      touch-action: manipulation; /* allow pointer events for drag/touch */
+      touch-action: manipulation;
       user-select: none;
       -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
       -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-font-smoothing: antialiased;
+      will-change: transform;
+      transform: translateZ(0);
     }
     .chat-bubble:active{transform:scale(0.98)}
     .chat-bubble .label{display:none}
@@ -455,7 +461,7 @@
             <div class="kicker" style="margin-bottom:12px">Contact Us</div>
             <div class="social-links">
               <!-- Instagram -->
-              <a href="https://instagram.com/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.instagram.com/redzone.vendor/" class="social-link" title="Instagram" target="_blank" rel="noopener noreferrer">
                 <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M12 8a4 4 0 100 8 4 4 0 000-8z" fill="var(--bg)"/><circle cx="18.5" cy="5.5" r="1.5" fill="var(--bg)"/></svg>
               </a>
               
@@ -465,12 +471,12 @@
               </a>
               
               <!-- TikTok -->
-              <a href="https://tiktok.com/" class="social-link" title="TikTok" target="_blank" rel="noopener noreferrer">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v12.7a2.85 2.85 0 1 1-5.45-2.36c.34-.94 1.16-1.28 2.26-1.3v3.67a5.50 5.50 0 1 0 5.68 5.33V9.5a7.50 7.50 0 0 0 4.26-4.81z"/></svg>
+              <a href="https://www.tiktok.com/@redzone.vendor?_r=1&_t=ZS-91ZXHOPBjpA" class="social-link" title="TikTok" target="_blank" rel="noopener noreferrer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
               </a>
               
               <!-- Email -->
-              <a href="mailto:redzone.adm01@gmail.com?subject=Order%20Kaos&body=Halo%20Redzone,%0DSaya%20mau%20tanya%20soal%20custom%20kaos." class="social-link" title="Email" target="_blank" rel="noopener noreferrer">
+              <a href="mailto:redzone.adm01@gmail.com" class="social-link" title="Email" target="_blank" rel="noopener noreferrer">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
               </a>
             </div>
@@ -493,9 +499,9 @@
   </div>
 
   <!-- Floating draggable WhatsApp bubble -->
-  <a id="chatBubble" class="chat-bubble" href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp" aria-label="WhatsApp chat">
-    <span class="label">Hubungi kami diWhatsaap</span>
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.47-.149-.67.15-.198.297-.767.967-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.133-.133.297-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.074-.149-.67-1.611-.916-2.205-.242-.579-.487-.5-.67-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487 0 0 .845.36 1.31.29.448-.064 1.758-.72 2.006-1.415.248-.695.248-1.29.173-1.415-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.486 2 2 6.485 2 12c0 2.11.586 4.083 1.6 5.78L2 22l4.37-1.453C8.704 21.49 10.312 22 12 22c5.514 0 10-4.485 10-10S17.514 2 12 2z"/></svg>
+  <a id="chatBubble" class="chat-bubble" href="https://wa.me/628557435888" target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp" aria-label="WhatsApp chat">
+    <span class="label">Hubungi kami di Whatsapp</span>
+    <img src="https://pbs.twimg.com/media/G6PzaLyacAIQT-1?format=png&name=small" alt="WhatsApp" style="width:28px; height:28px; display:block"/>
   </a>
 
   <!-- Team Member Modal -->
@@ -720,6 +726,7 @@
       function setSidebar(){ return document.querySelector('aside.sidebar'); }
       function getNavWidth(){ const nav = setSidebar(); return (nav && window.innerWidth > 900) ? nav.offsetWidth : 0; }
       
+      // Store position state to maintain consistency
       function setPosLeftTop(x,y){
         bubble.style.left = x + 'px';
         bubble.style.top = y + 'px';
@@ -750,13 +757,16 @@
       let pointerId = null;
       let startX = 0, startY = 0, origX = 0, origY = 0;
       let moved = false;
+      const DRAG_THRESHOLD = 8; // pixels needed to consider it a drag
 
       // Support both pointer and touch events for mobile compatibility
       function startDrag(ev){
+        if(ev.target !== bubble) return;
         bubble.classList.remove('hint');
         ev.preventDefault();
-        pointerId = ev.pointerId || 1;
-        if(bubble.setPointerCapture) bubble.setPointerCapture(pointerId);
+        ev.stopPropagation();
+        pointerId = ev.pointerId || (ev.touches ? ev.touches[0].identifier : 1);
+        if(bubble.setPointerCapture && ev.pointerId) bubble.setPointerCapture(pointerId);
         dragging = true;
         moved = false;
         startX = ev.clientX || (ev.touches ? ev.touches[0].clientX : 0);
@@ -765,8 +775,8 @@
         origX = rect.left; origY = rect.top;
         size = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bubble-size')) || size;
       }
-      bubble.addEventListener('pointerdown', startDrag);
-      bubble.addEventListener('touchstart', startDrag, {passive:false});
+      bubble.addEventListener('pointerdown', startDrag, false);
+      bubble.addEventListener('touchstart', startDrag, {passive:false, capture:false});
 
       function moveDrag(ev){
         if(!dragging) return;
@@ -778,23 +788,27 @@
         }
         const dx = clientX - startX;
         const dy = clientY - startY;
-        if(Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
-        let nx = origX + dx;
-        let ny = origY + dy;
-        const navWidth = getNavWidth();
-        const minX = navWidth + 8;
-        const maxX = window.innerWidth - size - 8;
-        const topLimit = 8 + (document.querySelector('.site-header')?.offsetHeight || 0);
-        const maxY = window.innerHeight - size - 8;
-        nx = clamp(nx, minX, maxX);
-        ny = clamp(ny, topLimit, maxY);
-        setPosLeftTop(nx, ny);
+        // Only mark as moved if exceeds threshold
+        if(Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD){
+          moved = true;
+        }
+        if(moved){
+          let nx = origX + dx;
+          let ny = origY + dy;
+          const navWidth = getNavWidth();
+          const minX = navWidth + 8;
+          const maxX = window.innerWidth - size - 8;
+          const topLimit = 8 + (document.querySelector('.site-header')?.offsetHeight || 0);
+          const maxY = window.innerHeight - size - 8;
+          nx = clamp(nx, minX, maxX);
+          ny = clamp(ny, topLimit, maxY);
+          setPosLeftTop(nx, ny);
+        }
       }
-      window.addEventListener('pointermove', moveDrag, {passive:false});
-      window.addEventListener('touchmove', moveDrag, {passive:false});
+      document.addEventListener('pointermove', moveDrag, false);
+      document.addEventListener('touchmove', moveDrag, {passive:false, capture:false});
 
       function snapToEdge(){
-        // Snap to left or right edge depending on where the bubble's center is
         const rect = bubble.getBoundingClientRect();
         const centerX = rect.left + rect.width/2;
         const navWidth = getNavWidth();
@@ -803,12 +817,10 @@
         const topLimit = 8 + (document.querySelector('.site-header')?.offsetHeight || 0);
         let finalTop = clamp(rect.top, topLimit, window.innerHeight - rect.height - 8);
         
-        // Add snap animation class
         bubble.classList.add('snapping');
         setTimeout(()=> bubble.classList.remove('snapping'), 850);
         
         if(centerX < viewportMid){
-          // snap left (but not into sidebar)
           bubble.style.left = minLeftSnap + 'px';
           bubble.style.top = Math.round(finalTop) + 'px';
           bubble.style.right = 'auto';
@@ -816,7 +828,6 @@
           bubble.classList.remove('snapped-right');
           bubble.classList.add('snapped-left');
         } else {
-          // snap right
           bubble.style.right = '24px';
           bubble.style.top = Math.round(finalTop) + 'px';
           bubble.style.left = 'auto';
@@ -828,35 +839,55 @@
 
       function endDrag(ev){
         if(!dragging) return;
-        try{ bubble.releasePointerCapture(pointerId); }catch(e){}
+        if(bubble.releasePointerCapture && pointerId) try{ bubble.releasePointerCapture(pointerId); }catch(e){}
         dragging = false;
-        // snap to nearest edge
         snapToEdge();
       }
 
-      window.addEventListener('pointerup', (ev)=>{ endDrag(ev); });
-      window.addEventListener('pointercancel', (ev)=>{ endDrag(ev); });
-      window.addEventListener('touchend', (ev)=>{ endDrag(ev); });
-      window.addEventListener('touchcancel', (ev)=>{ endDrag(ev); });
+      document.addEventListener('pointerup', endDrag, false);
+      document.addEventListener('pointercancel', endDrag, false);
+      document.addEventListener('touchend', (ev)=>{ endDrag(ev); }, {passive:false});
+      document.addEventListener('touchcancel', (ev)=>{ endDrag(ev); }, {passive:false});
 
       // Distinguish click vs drag: if not moved significantly, allow normal navigation
       bubble.addEventListener('click', (ev)=>{
+        // Only prevent link navigation if user actually dragged the bubble
         if(moved){
-          // prevent following the link when the user was dragging
           ev.preventDefault();
           ev.stopPropagation();
         }
-      });
+        // Otherwise let the link work naturally
+      }, false);
+      
+      // Additional: on touchend, allow link click if not dragged
+      bubble.addEventListener('touchend', (ev)=>{
+        if(!moved){
+          // Let the click event fire naturally to open the link
+          const clickEvent = new MouseEvent('click', {bubbles: true, cancelable: true});
+          bubble.dispatchEvent(clickEvent);
+        }
+      }, {passive:true});
 
-      // On resize, make sure bubble stays visible and reset to default bottom-right
+      // Handle scroll: restore position state to avoid jumping
+      let scrollTimeout;
+      window.addEventListener('scroll', ()=>{
+        if(!dragging){
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(()=>{
+            // Keep bubble at last snapped position
+            if(bubble.classList.contains('snapped-right')){
+              bubble.style.right = '24px';
+              bubble.style.left = 'auto';
+            }
+          }, 150);
+        }
+      }, {passive:true});
+
+      // On resize, restore position
       window.addEventListener('resize', ()=>{
         size = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bubble-size')) || size;
-        // Reset to default on resize to ensure consistent placement
-        setPosRightBottom();
-        bubble.classList.remove('snapped-left', 'snapped-right');
-      });
+      }, {passive:true});
 
-      // Keep bubble on top while interacting with modals
       const observer = new MutationObserver(()=> bubble.style.zIndex = 120);
       observer.observe(document.body, {attributes:true, childList:true, subtree:true});
     })();
